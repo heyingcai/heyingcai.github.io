@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[Hello World]]></title>
+    <url>%2F2018%2F08%2F19%2Fhello-world%2F</url>
+    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[深入理解JVM（一）]]></title>
+    <url>%2F2018%2F01%2F14%2F%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%EF%BC%88%E4%B8%80%EF%BC%89%2F</url>
+    <content type="text"></content>
+      <categories>
+        <category>JVM</category>
+      </categories>
+      <tags>
+        <tag>JVM</tag>
+        <tag>虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[延时消息队列常用的解决方案]]></title>
+    <url>%2F2017%2F08%2F21%2F%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%2F</url>
+    <content type="text"><![CDATA[消息队列 什么是消息队列？曾记得在我刚入行以来第一次听到这个名词的时候就觉得这个东东到底有什么用？和数据以前在大学数据结构课程上的队列有啥区别？实际项目中又有什么用呢？各种问题困扰着我，但是我觉得只要怀着对技术有一份狂热，就要对它进行知根知底，这是对技术提高以及成长的必经之路。 其实消息队列就是我们所了解的基本数据结构的队列一个概念，包括最基本的入队和出队，先进先出的特性，当然现在市面上的消息队列有很多种产品，比如kafka、rabbitmq、activemq、rocketmq、以及基于redis的list结构的轻量级消息队列，他们都拥有基本的队列特性，有的产品也对有包括持久化、事务一致性、延迟等特性。在我看来这个东东就是一个中间件，被人们当成系统解耦的利器，也可以用来解决特殊的业务场景，比如：数据缓冲等。 来讲讲一些应用场景 最近做项目的时候我负责的是核心订单功能，用户在下单的时候订单会有个过期时间，在超过过期时间的订单将自动失效，常用的集中解决思路如下： 后台开启若干线程进行扫面订单，判断过期时间并更改状态，缺点：若量大，服务器会宕机 使用redis，将产生的订单放入redis并设置 失效时间 定时任务，每分钟扫描一次，缺点：实时性不高，同时服务器压力大 使用delayedQueue延时队列，将订单按顺序放入延时队列，设置到期时间，到期后出队，单机环境下推荐 使用支持分布式的延迟MQ，例如rabbitmq，分布式环境下推荐]]></content>
+      <categories>
+        <category>中间件</category>
+      </categories>
+      <tags>
+        <tag>消息队列</tag>
+        <tag>redis</tag>
+        <tag>rabbitmq</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[缓存那些事]]></title>
+    <url>%2F2017%2F06%2F02%2F%E7%BC%93%E5%AD%98%E9%82%A3%E4%BA%9B%E4%BA%8B%2F</url>
+    <content type="text"><![CDATA[缓存策略那些事 对于如今互联网行业的快速发展，为适应和满足各种需求的应用场景，我们不能仅依赖传统的关系型数据库，同时在软件设计上达到高性能，高可用的特性，加入一个缓存中间件显得格外的必要，而缓存概念说起来简单，但实际上缓存的策略会极大的影响着我们的系统，先前在工作上有加入了Redis中间件提供缓存服务，但在实现中缺遇到了很多问题—缓存策略。 更新缓存的策略有四种： Cache aside Read through Write through Write behind Cache aside这是我们最常用的模式，逻辑如下： 失效：应用程序先从cache取数据，没有得到，则从数据库中取数据，成功后，放到缓存中。 命中：应用程序从cache中取数据，取到后返回。 更新：先把数据存到数据库中，成功后，再让缓存失效。 ##Read throughRead Through 套路就是在查询操作中更新缓存，也就是说，当缓存失效的时候（过期或LRU换出），Cache Aside是由调用方负责把数据加载入缓存，而Read Through则用缓存服务自己来加载，从而对应用方是透明的。 ##Write throughWrite Through 套路和Read Through相仿，不过是在更新数据时发生。当有数据更新的时候，如果没有命中缓存，直接更新数据库，然后返回。如果命中了缓存，则更新缓存，然后再由Cache自己更新数据库（这是一个同步操作） Write behind一句说就是，在更新数据的时候，只更新缓存，不更新数据库，而我们的缓存会异步地批量更新数据库。这个设计的好处就是让数据的I/O操作飞快无比（因为直接操作内存嘛 ），因为异步，write backg还可以合并对同一个数据的多次操作，所以性能的提高是相当可观的。但是，其带来的问题是，数据不是强一致性的，而且可能会丢失（我们知道Unix/Linux非正常关机会导致数据丢失，就是因为这个事）。在软件设计上，我们基本上不可能做出一个没有缺陷的设计，就像算法设计中的时间换空间，空间换时间一个道理，有时候，强一致性和高性能，高可用和高性性是有冲突的。软件设计从来都是取舍Trade-Off。]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+        <tag>缓存</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Solr实战（二）---使用IKAnalyzer中文分词]]></title>
+    <url>%2F2017%2F05%2F22%2FSolr2%2F</url>
+    <content type="text"><![CDATA[Solr搜索引擎使用IKAnalyzer中文分词 IKAnalyzer是比较好的分词器，分词效果很好，而且Solr也支持插件式的工具配合使用，但是大部分IKAnalyzer只支持Solr4.x版本，我使用的Solr版本是5.5，不过可以在这里下载（传送门）。下面开始在我们的Solr中加入这个强大的分词器。 IKAnalyzer安装 把下载好的IKAnalyzer目录下的文件拷贝到我们之前的Tomcat8\webapps\solr-webapp\WEB-INF\lib目录下。 进入到我们的Solr文件夹，进入jobs\conf\managed-schema（Solr配置索引字段的配置文件），增加中文分词配置节点，加入如下配置：&lt;fieldType name="text_ik" class="solr.TextField"&gt; &lt;analyzer type="index" isMaxWordLength="false" class="org.wltea.analyzer.lucene.IKAnalyzer"/&gt; &lt;analyzer type="query" isMaxWordLength="true" class="org.wltea.analyzer.lucene.IKAnalyzer"/&gt; &lt;/fieldType&gt; 为我们要进行分词的字段添加配置，例如我的是如下配置：&lt;!--爬虫字段索引配置--&gt; &lt;field name="article_title" type="text_ik" indexed="true" stored="true" multiValued="true" /&gt; &lt;field name="account_name" type="text_ik" indexed="true" stored="true" multiValued="true" /&gt; 注意：type表示字段类型，indexed表示是否进行索引，stored表示是否存储该字段，multiValued表示是否可以进行合并字段。 保存配置文件，重启Slor服务即可。 备注：之前你已经对当前文档该字段建立索引，若想要达到分词效果，请先清空索引，重新建立索引即可对该字段进行分词查询。]]></content>
+      <categories>
+        <category>搜索引擎</category>
+      </categories>
+      <tags>
+        <tag>中文分词</tag>
+        <tag>IKAnalyzer</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Solr实战（一）---Solr介绍与搭建]]></title>
+    <url>%2F2017%2F05%2F21%2FSolr%2F</url>
+    <content type="text"><![CDATA[Solr搜索引擎的搭建以及使用 第一次听说Solr这个词是在亚信实习的时候，项目中用到搜索引擎来进行工单的模糊搜索，当时对Solr的工作原理和实战还不是很了解，只有个大概的了解，近期在做毕设，做了个爬虫项目，采集了上百万条微信公众号文章数据，有个需求就是对文章进行全文检索，故我的爬虫项目将加入Solr为我提供全文检索服务。 Solr介绍 Apache Solr 是一个开源的搜索服务器， Solr 使用 Java 语言开发，主要基于 HTTP 和Apache Lucene 实现。定制 Solr 索引的实现方法很简单，用 POST 方法向 Solr 服务器发送一个描述所有 Field 及其内容的 XML 文档就可以了。定制搜索的时候只需要发送 HTTP GET 请求即可，然后对 Solr 返回的信息进行重新布局，以产生利于用户理解的页面内容布局。 Solr 1.3版本开始支持从数据库（通过 JDBC）、 RSS 提要、 Web 页面和文件中导入数据，但是不直接支持从二进制文件格式中提取内容，比如 MS Office、 Adobe PDF 或其他专有格式。 更重要的是， Solr 创建的索引与 Lucene 搜索引擎库完全兼容。通过对 Solr 进行适当的配置，某些情况下可能需要进行编码， Solr 可以阅读和使用构建到其他 Lucene 应用程序中的索引。此外，很多 Lucene 工具（如 Nutch、 Luke）也可以使用 Solr 创建的索引。 Solr的特性包括如下： 高级的全文搜索功能 专为高通量的网络流量进行的优化 基于开放接口（ XML 和 HTTP）的标准 综合的 HTML 管理界面 可伸缩性－能够有效地复制到另外一个 Solr 搜索服务器 使用 XML 配置达到灵活性和适配性 可扩展的插件体系 Solr搭建本机开发环境 Windows 10 JDK1.8 Tomcat 8 Solr5.5(传送门)开始搭建 选择一个合适的安装目录，新建一个文件夹，如：Solr。 将下载好的Tomcat8 拷贝到此目录下。 将下载好的Solr5.5解压，解压如下： 进入解压好的Solr5.5文件夹，将solr-5.5.0\server\solr-webapp 下的webapp文件夹拷贝到刚才准备好的Tomcat8\webapps目录下。 进入到solr-5.5.0\server 目录，将此目录下的solr文件夹，拷贝到与tomcat同一目录下，如图： 进入到Tomcat8\webapps\solr-webapp\WEB-INF，打开web.xml，在文件中找到env-entry，修改solr home如下： 进入到solr-5.5.0\server\lib\ext，将所有jar包，拷贝到solr_server\tomcat-8\webapps\solr-webapp\WEB-INF\lib下。 进入到solr-5.5.0\server\resources，将log4j.properties 拷贝到solr_server\tomcat-8\webapps\solr-webapp\WEB-INF\目录下。 启动tomcat服务器，在地址栏中输入http://localhost:8080/solr-webapp/admin.html，即可看到solr配置成功。![Alt text](Solr/admin.png) 进入solr管理页面，点击左侧的core admin，然后点击add core，在name 和instanceDir下都输入jobs(在步骤一中取得名称) ，点击add core即可。 在左侧即可看见刚刚建立的core。进入Solr目录下有个jobs文件夹，这个文件夹就是我们项目中用到的配置文件等必要的配置信息，包括索引文件等。 此时，我们的Solr服务基本已经搭建起来了。]]></content>
+      <categories>
+        <category>搜索引擎</category>
+      </categories>
+      <tags>
+        <tag>Solr</tag>
+        <tag>搜索引擎</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[强势回归!]]></title>
+    <url>%2F2017%2F03%2F18%2FNew-Article%2F</url>
+    <content type="text"><![CDATA[终于回归博客！之前的阿里云学生机到期了，眼看着马上就要毕业了，续费也不太划算，以后再打算买台私人服务器吧，Hexo用着也挺舒心的。 加油！！！]]></content>
+      <categories>
+        <category>闲话</category>
+      </categories>
+      <tags>
+        <tag>回归</tag>
+      </tags>
+  </entry>
+</search>
