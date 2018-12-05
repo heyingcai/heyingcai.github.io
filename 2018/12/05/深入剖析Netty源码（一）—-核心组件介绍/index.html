@@ -95,7 +95,7 @@
 <meta property="og:site_name" content="Bronson&#39;s Blog">
 <meta property="og:description" content="深入剖析Netty源码（一）—-核心组件介绍！">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-05T14:43:59.784Z">
+<meta property="og:updated_time" content="2018-12-05T14:45:59.496Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入剖析Netty源码（一）—-核心组件介绍">
 <meta name="twitter:description" content="深入剖析Netty源码（一）—-核心组件介绍！">
@@ -369,23 +369,21 @@
       
 
       
-        <p>#Netty介绍</p>
-<blockquote>
+        <h1 id="Netty介绍"><a href="#Netty介绍" class="headerlink" title="Netty介绍"></a>Netty介绍</h1><blockquote>
 <p>Netty 是一款提供异步的、事件驱动的网络应用程序框架和工具，用以快速开发高性能、高可靠性的网络服务器和客户端程序<br>也就是说，Netty 是一个基于 NIO 的客户、服务器端编程框架，使用 Netty 可以确保你快速和简单地开发出一个网络应用，例如实现了某种协议的客户，服务端应用。Netty 相当简化和流线化了网络应用的编程开发过程，例如，TCP 和 UDP 的 socket 服务开发。（以上摘自百度百科）。</p>
 </blockquote>
-<p>#Netty核心组件</p>
-<ul>
+<h1 id="Netty核心组件"><a href="#Netty核心组件" class="headerlink" title="Netty核心组件"></a>Netty核心组件</h1><ul>
 <li>Channel</li>
 <li>ChannelHandler</li>
 <li>ChannelPipeline</li>
 <li>EventLoop</li>
 <li>ByteBuf</li>
 </ul>
-<p>##Channel<br>Channel是Netty基于Java网络编程socket的抽象类，它拥有基本的I/O操作能力，同时还有bind、connect、read、write以及Netty实现的相关能力，大大降低了直接使用Socket类的复杂性。</p>
-<p>##ChannelHandler<br>ChannelHandler是Netty非常核心的组件，也是应用开发者日常编码中接触最多的组件，顾名思义，它的核心功能就是用来处理各种“网络事件”，它充当了所有处理入站和出站数据的应用程序逻辑的容器。<br>ChannelHandler有两个核心子类：ChannelInboundHandler和ChannelOutboundHandler。ChannelInboundHandler接收入站事件和数据，ChannelOutboundHandler则用于处理出站事件，例如connect、bind等操作。</p>
-<p>##ChannelPipeline<br>ChannelPipeline为ChannelHandler链提供了容器并定义了用于在该链上传播入站和出站事件流的API，ChannelPipeline将多个ChannelHandler链接在一起来让事件在其中传播处理。一个ChannelPipeline中可能不仅有入站处理器，还有出站处理器，入站处理器只会处理入站的事件，而出站处理器只会处理出站的数据。</p>
-<p>##EventLoop<br>从设计上来看，EventLoop采用了一种协同设计，它建立在两个基本的API之上：Concurrent和Channel，也就是并发和网络。并发是因为它采用了线程池来管理大量的任务，并且这些任务可以并发的执行。其继承了EventExecutor接口，而EventExecutor就是一个事件的执行器。另外为了与Channel的事件进行交互，EventLoop继承了EventLoopGroup接口。一个Netty服务端启动时，通常会有两个NioEventLoopGroup：一个boss，一个worker。第一个NioEventLoopGroup正常只需要一个EventLoop，主要负责客户端的连接请求，然后打开一个Channel，交给第二个NioEventLoopGroup中的一个EventLoop来处理这个Channel上的所有读写事件。一个Channel只会被一个EventLoop处理，而一个EventLoop可能会被分配给多个Channel。</p>
-<p>##ByteBuf<br>网络数据的基本单位总是字节。Java NIO 提供了 ByteBuffer 作为它 的字节容器，但是这个类使用起来过于复杂，而且也有些繁琐。Netty 的 ByteBuffer 替代品是 ByteBuf，一个强大的实现，既解决了 JDK API 的局限性， 又为网络应用程序的开发者提供了更好的 API。</p>
+<h2 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel</h2><p>Channel是Netty基于Java网络编程socket的抽象类，它拥有基本的I/O操作能力，同时还有bind、connect、read、write以及Netty实现的相关能力，大大降低了直接使用Socket类的复杂性。</p>
+<h2 id="ChannelHandler"><a href="#ChannelHandler" class="headerlink" title="ChannelHandler"></a>ChannelHandler</h2><p>ChannelHandler是Netty非常核心的组件，也是应用开发者日常编码中接触最多的组件，顾名思义，它的核心功能就是用来处理各种“网络事件”，它充当了所有处理入站和出站数据的应用程序逻辑的容器。<br>ChannelHandler有两个核心子类：ChannelInboundHandler和ChannelOutboundHandler。ChannelInboundHandler接收入站事件和数据，ChannelOutboundHandler则用于处理出站事件，例如connect、bind等操作。</p>
+<h2 id="ChannelPipeline"><a href="#ChannelPipeline" class="headerlink" title="ChannelPipeline"></a>ChannelPipeline</h2><p>ChannelPipeline为ChannelHandler链提供了容器并定义了用于在该链上传播入站和出站事件流的API，ChannelPipeline将多个ChannelHandler链接在一起来让事件在其中传播处理。一个ChannelPipeline中可能不仅有入站处理器，还有出站处理器，入站处理器只会处理入站的事件，而出站处理器只会处理出站的数据。</p>
+<h2 id="EventLoop"><a href="#EventLoop" class="headerlink" title="EventLoop"></a>EventLoop</h2><p>从设计上来看，EventLoop采用了一种协同设计，它建立在两个基本的API之上：Concurrent和Channel，也就是并发和网络。并发是因为它采用了线程池来管理大量的任务，并且这些任务可以并发的执行。其继承了EventExecutor接口，而EventExecutor就是一个事件的执行器。另外为了与Channel的事件进行交互，EventLoop继承了EventLoopGroup接口。一个Netty服务端启动时，通常会有两个NioEventLoopGroup：一个boss，一个worker。第一个NioEventLoopGroup正常只需要一个EventLoop，主要负责客户端的连接请求，然后打开一个Channel，交给第二个NioEventLoopGroup中的一个EventLoop来处理这个Channel上的所有读写事件。一个Channel只会被一个EventLoop处理，而一个EventLoop可能会被分配给多个Channel。</p>
+<h2 id="ByteBuf"><a href="#ByteBuf" class="headerlink" title="ByteBuf"></a>ByteBuf</h2><p>网络数据的基本单位总是字节。Java NIO 提供了 ByteBuffer 作为它 的字节容器，但是这个类使用起来过于复杂，而且也有些繁琐。Netty 的 ByteBuffer 替代品是 ByteBuf，一个强大的实现，既解决了 JDK API 的局限性， 又为网络应用程序的开发者提供了更好的 API。</p>
 
       
     </div>
@@ -487,8 +485,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/uploads/logo.jpg"
@@ -550,6 +557,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Netty介绍"><span class="nav-number">1.</span> <span class="nav-text">Netty介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Netty核心组件"><span class="nav-number">2.</span> <span class="nav-text">Netty核心组件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Channel"><span class="nav-number">2.1.</span> <span class="nav-text">Channel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChannelHandler"><span class="nav-number">2.2.</span> <span class="nav-text">ChannelHandler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChannelPipeline"><span class="nav-number">2.3.</span> <span class="nav-text">ChannelPipeline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EventLoop"><span class="nav-number">2.4.</span> <span class="nav-text">EventLoop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ByteBuf"><span class="nav-number">2.5.</span> <span class="nav-text">ByteBuf</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
