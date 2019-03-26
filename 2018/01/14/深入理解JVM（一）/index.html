@@ -95,14 +95,14 @@
 <meta property="og:site_name" content="Bronson&#39;s Blog">
 <meta property="og:description" content="深入学习Java从JVM开始！">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2018/01/14/深入理解JVM（一）/深入理解JVM（一）/jvm启动流程.png">
-<meta property="og:image" content="http://yoursite.com/2018/01/14/深入理解JVM（一）/深入理解JVM（一）/jvm基本结构.png">
-<meta property="og:image" content="http://yoursite.com/2018/01/14/深入理解JVM（一）/深入理解JVM（一）/jvm内存模型.png">
-<meta property="og:updated_time" content="2019-03-26T15:11:00.448Z">
+<meta property="og:image" content="http://yoursite.com/2018/01/14/深入理解JVM（一）/jvm/jvm-start.png">
+<meta property="og:image" content="http://yoursite.com/2018/01/14/深入理解JVM（一）/jvm/jvm-struct.png">
+<meta property="og:image" content="http://yoursite.com/2018/01/14/深入理解JVM（一）/jvm/jvm-model.png">
+<meta property="og:updated_time" content="2019-03-26T15:15:59.535Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入理解JVM（一）-------JVM运行机制">
 <meta name="twitter:description" content="深入学习Java从JVM开始！">
-<meta name="twitter:image" content="http://yoursite.com/2018/01/14/深入理解JVM（一）/深入理解JVM（一）/jvm启动流程.png">
+<meta name="twitter:image" content="http://yoursite.com/2018/01/14/深入理解JVM（一）/jvm/jvm-start.png">
 
 
 
@@ -384,9 +384,9 @@
 <li>JVM内存模型</li>
 <li>编译和解释运行的概念</li>
 </ul>
-<h2 id="JVM启动流程"><a href="#JVM启动流程" class="headerlink" title="JVM启动流程"></a>JVM启动流程</h2><p>我们先看大概的流程图：<br><img src="深入理解JVM（一）/jvm启动流程.png" alt="Alt text"></p>
+<h2 id="JVM启动流程"><a href="#JVM启动流程" class="headerlink" title="JVM启动流程"></a>JVM启动流程</h2><p>我们先看大概的流程图：<br><img src="jvm/jvm-start.png" alt="Alt text"></p>
 <h3 id="配置JVM装载环境"><a href="#配置JVM装载环境" class="headerlink" title="配置JVM装载环境"></a>配置JVM装载环境</h3><p>当我们执行java -jar xxxx.jar 的时候，Java代码执行时需要JVM环境，JVM环境的创建包括：JVM.dll文件的查找和装载。</p>
-<h3 id="虚拟机参数解析"><a href="#虚拟机参数解析" class="headerlink" title="虚拟机参数解析"></a>虚拟机参数解析</h3><h3 id="设置线程栈大小"><a href="#设置线程栈大小" class="headerlink" title="设置线程栈大小"></a>设置线程栈大小</h3><h3 id="执行main方法"><a href="#执行main方法" class="headerlink" title="执行main方法"></a>执行main方法</h3><h2 id="JVM基本结构"><a href="#JVM基本结构" class="headerlink" title="JVM基本结构"></a>JVM基本结构</h2><p><img src="深入理解JVM（一）/jvm基本结构.png" alt="Alt text"></p>
+<h3 id="虚拟机参数解析"><a href="#虚拟机参数解析" class="headerlink" title="虚拟机参数解析"></a>虚拟机参数解析</h3><h3 id="设置线程栈大小"><a href="#设置线程栈大小" class="headerlink" title="设置线程栈大小"></a>设置线程栈大小</h3><h3 id="执行main方法"><a href="#执行main方法" class="headerlink" title="执行main方法"></a>执行main方法</h3><h2 id="JVM基本结构"><a href="#JVM基本结构" class="headerlink" title="JVM基本结构"></a>JVM基本结构</h2><p><img src="jvm/jvm-struct.png" alt="Alt text"></p>
 <h3 id="PC寄存器"><a href="#PC寄存器" class="headerlink" title="PC寄存器"></a>PC寄存器</h3><ul>
 <li>每个线程拥有一个PC寄存器</li>
 <li>在线程创建时创建</li>
@@ -416,7 +416,7 @@
 <li>大对象或者逃逸对象无法栈上分配</li>
 </ul>
 <p>如何让函数递归调用层次更深？<br>可以从以下两个方面解决：第一，增大栈空间；第二，减少局部变量表，少用double、long，减少参数个数，局部变量在使用的时候，注意作用域。在作用域开外的，局部变量是可以被重用的，以此减少局部变量表的大小。</p>
-<h2 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h2><p><img src="深入理解JVM（一）/jvm内存模型.png" alt="Alt text"></p>
+<h2 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h2><p><img src="jvm/jvm-model.png" alt="Alt text"></p>
 <ul>
 <li>每个线程有一个工作内存和主存独立</li>
 <li>工作内存存放主存中变量的值的拷贝</li>
