@@ -14,9 +14,22 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[深入理解JVM（一）-------JVM内存模型]]></title>
-    <url>%2F2018%2F01%2F14%2F%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%EF%BC%88%E4%B8%80%EF%BC%89%2F</url>
+    <title><![CDATA[Java NIO]]></title>
+    <url>%2F2018%2F12%2F01%2FJava-NIO%2F</url>
     <content type="text"></content>
+      <categories>
+        <category>JDK</category>
+      </categories>
+      <tags>
+        <tag>NIO</tag>
+        <tag>源码</tag>
+        <tag>jdk</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[深入理解JVM（一）-------JVM运行机制]]></title>
+    <url>%2F2018%2F01%2F14%2F%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%EF%BC%88%E4%B8%80%EF%BC%89%2F</url>
+    <content type="text"><![CDATA[JVM运行机制介绍 JVM启动流程 JVM基本结构 JVM内存模型 编译和解释运行的概念 JVM启动流程我们先看大概的流程图： 配置JVM装载环境当我们执行java -jar xxxx.jar 的时候，Java代码执行时需要JVM环境，JVM环境的创建包括：JVM.dll文件的查找和装载。 虚拟机参数解析设置线程栈大小执行main方法JVM基本结构 PC寄存器 每个线程拥有一个PC寄存器 在线程创建时创建 指向下一条指令的地址 执行本地方式时，PC的值为undefined 方法区 保存装载的类信息：类型的常量池、字段和方法信息、方法字节码 通常和永久区（Perm）关联在一起注：移除永久代的工作从JDK1.7就开始了，在JDK1.7中，存储在永久代的部分数据已经转移到了Java堆或者是Native Heap，JDK1.8中，HotSpot已经没有 “PermGen space” 这个区间了，取而代之的是一个叫做Metaspace（元空间）的东西。 Java堆 和程序开发密切相关 应用系统对象都保存在Java堆中 所有线程共享Java堆 对分代GC来说，堆也是分代的 GC的主要工作区间 Java栈 线程私有 栈由一系列帧组成（因此Java栈也叫做帧栈） 帧保存一个方法的局部变量、操作数栈、常量池指针 每一个方法调用创建一个帧，并压栈 Java栈上分配 小对象（一般几十个字节）在没有逃逸的情况下，可以直接分配在栈上 直接分配在栈上，可以自动回收，减轻GC压力 大对象或者逃逸对象无法栈上分配 如何让函数递归调用层次更深？可以从以下两个方面解决：第一，增大栈空间；第二，减少局部变量表，少用double、long，减少参数个数，局部变量在使用的时候，注意作用域。在作用域开外的，局部变量是可以被重用的，以此减少局部变量表的大小。 JVM内存模型 每个线程有一个工作内存和主存独立 工作内存存放主存中变量的值的拷贝 可见性 一个线程修改了变量，其他线程可以立即知道 保证可见性的方法 volatile synchronized（unlock之前，写变量值回主存） final（一旦初始化完成，其他线程就可见） 有序性 在本线程内，操作都是有序的 在线程外观察，操作都是无序的（指令重排或者主内存同步延时）]]></content>
       <categories>
         <category>JVM</category>
       </categories>
