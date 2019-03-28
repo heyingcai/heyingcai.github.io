@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[记一次排除线上故障]]></title>
+    <url>%2F2019%2F03%2F28%2F%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8E%92%E9%99%A4%E7%BA%BF%E4%B8%8A%E6%95%85%E9%9A%9C%2F</url>
+    <content type="text"><![CDATA[发现问题]]></content>
+      <categories>
+        <category>jvm</category>
+      </categories>
+      <tags>
+        <tag>jvm</tag>
+        <tag>线上</tag>
+        <tag>排除故障</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[深入剖析Netty源码（一）—-核心组件介绍]]></title>
     <url>%2F2018%2F12%2F05%2F%E6%B7%B1%E5%85%A5%E5%89%96%E6%9E%90Netty%E6%BA%90%E7%A0%81%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E4%BB%8B%E7%BB%8D%2F</url>
     <content type="text"><![CDATA[Netty介绍 Netty 是一款提供异步的、事件驱动的网络应用程序框架和工具，用以快速开发高性能、高可靠性的网络服务器和客户端程序也就是说，Netty 是一个基于 NIO 的客户、服务器端编程框架，使用 Netty 可以确保你快速和简单地开发出一个网络应用，例如实现了某种协议的客户，服务端应用。Netty 相当简化和流线化了网络应用的编程开发过程，例如，TCP 和 UDP 的 socket 服务开发。（以上摘自百度百科）。 Netty核心组件 Channel ChannelHandler ChannelPipeline EventLoop ByteBuf ChannelChannel是Netty基于Java网络编程socket的抽象类，它拥有基本的I/O操作能力，同时还有bind、connect、read、write以及Netty实现的相关能力，大大降低了直接使用Socket类的复杂性。 ChannelHandlerChannelHandler是Netty非常核心的组件，也是应用开发者日常编码中接触最多的组件，顾名思义，它的核心功能就是用来处理各种“网络事件”，它充当了所有处理入站和出站数据的应用程序逻辑的容器。ChannelHandler有两个核心子类：ChannelInboundHandler和ChannelOutboundHandler。ChannelInboundHandler接收入站事件和数据，ChannelOutboundHandler则用于处理出站事件，例如connect、bind等操作。 ChannelPipelineChannelPipeline为ChannelHandler链提供了容器并定义了用于在该链上传播入站和出站事件流的API，ChannelPipeline将多个ChannelHandler链接在一起来让事件在其中传播处理。一个ChannelPipeline中可能不仅有入站处理器，还有出站处理器，入站处理器只会处理入站的事件，而出站处理器只会处理出站的数据。 EventLoop从设计上来看，EventLoop采用了一种协同设计，它建立在两个基本的API之上：Concurrent和Channel，也就是并发和网络。并发是因为它采用了线程池来管理大量的任务，并且这些任务可以并发的执行。其继承了EventExecutor接口，而EventExecutor就是一个事件的执行器。另外为了与Channel的事件进行交互，EventLoop继承了EventLoopGroup接口。一个Netty服务端启动时，通常会有两个NioEventLoopGroup：一个boss，一个worker。第一个NioEventLoopGroup正常只需要一个EventLoop，主要负责客户端的连接请求，然后打开一个Channel，交给第二个NioEventLoopGroup中的一个EventLoop来处理这个Channel上的所有读写事件。一个Channel只会被一个EventLoop处理，而一个EventLoop可能会被分配给多个Channel。 ByteBuf网络数据的基本单位总是字节。Java NIO 提供了 ByteBuffer 作为它 的字节容器，但是这个类使用起来过于复杂，而且也有些繁琐。Netty 的 ByteBuffer 替代品是 ByteBuf，一个强大的实现，既解决了 JDK API 的局限性， 又为网络应用程序的开发者提供了更好的 API。]]></content>
