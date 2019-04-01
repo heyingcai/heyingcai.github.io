@@ -95,7 +95,7 @@
 <meta property="og:site_name" content="Bronson&#39;s Blog">
 <meta property="og:description" content="记录前不久线上系统出现的故障同时给自己一个警示，以后写代码要细心细心细心！！！">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-28T13:47:07.249Z">
+<meta property="og:updated_time" content="2019-04-01T13:27:48.073Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="记一次排除线上故障">
 <meta name="twitter:description" content="记录前不久线上系统出现的故障同时给自己一个警示，以后写代码要细心细心细心！！！">
@@ -374,7 +374,13 @@
       
 
       
-        <h1 id="发现问题"><a href="#发现问题" class="headerlink" title="发现问题"></a>发现问题</h1>
+        <h1 id="发现问题"><a href="#发现问题" class="headerlink" title="发现问题"></a>发现问题</h1><p>最近公司有个计划任务的程序出了点问题，早上更新了代码上去后重启了服务，不久后发现系统里有依赖计划任务的功能受到了影响，然后去控制台看了一下CPU的使用情况，发现CPU使用率飙升99%，最终导致程序崩溃了…</p>
+<h1 id="开始排查问题"><a href="#开始排查问题" class="headerlink" title="开始排查问题"></a>开始排查问题</h1><p>第一反应是先去看了一下最近更新上去的代码，首先从最简单的方向去判定，因为此次代码更新前程序都是正常运行的，更新上去了之后发现程序就不行了。然而此次代码更新的同事排查代码了之后没发现代码有bug，而且代码发布前也经过严格的测试的，此时就让人比较头疼了，为什么之前可以正常运行，现在就不行了呢？</p>
+<h2 id="第一阶段"><a href="#第一阶段" class="headerlink" title="第一阶段"></a>第一阶段</h2><p>重启了服务，再根据日志观察应用层是否有什么异常，然而应用日志一切正常，同时使用 top命令 观察CPU的使用情况，突然发现计划任务在轮询某个周期的时候CPU内存急剧飙升！！！这时候第一反应就是查看heap里到底是哪些对象占用了那么多的内存，首先通过jps 拿到tomcat的pid，然后执行 jmap -histo pid 查看对象信息，发现堆内存里除了常用的Java类库里的对象外，还有一个很明显的XXXXEntity业务对象和com.mysql.jdbc.ByteArrayRow对象占用率排在前几名，这时很明确的知道肯定是因为jvm里堆积了大量的业务对象，导致内存飙升，那证明肯定是代码的问题，必须回头再看看代码哪里有错。</p>
+<h2 id="第二阶段"><a href="#第二阶段" class="headerlink" title="第二阶段"></a>第二阶段</h2><p>这时几个同事围在一起一行一行代码排查过去，大家都很疑惑为啥之前可以，现在不行了呢。。。细心的我在某一个while(true) 里发现了bug。。。 这个业务是这样的，while(true)里进行分页的获取数据并且插入数据，同时带有分页控制，同时还有一个条件用于break，恰恰在于当这个条件不满足的时候，没有在代码后面break,导致这段阻塞代码一直insert数据，导致一直insert了好几百万的脏数据，导致计划任务在get这条任务数据时，从数据库中一次性拉取了所有的对象，这时内存肯定就炸了。。。真是够无语了。。</p>
+<h2 id="第三阶段"><a href="#第三阶段" class="headerlink" title="第三阶段"></a>第三阶段</h2><p>找到问题了之后，修复了这个低级的代码漏洞，并且删除了数据库的垃圾数据，重启了服务，同时观察内存cpu使用情况，发现程序恢复了正常！！！</p>
+<h1 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h1><p>1.这次的问题在于代码层面的低级逻辑错误，这警示了我们以后写代码的时候一定要非常注意细心，特别是有边界限制的代码，自测时一定要将测试用例覆盖完整。<br>2.排查问题时要结合应用日志和服务器CPU情况一起排查。<br>3.使用jmap查看堆信息，同时配合使用jstack查看堆栈信息定位死循环等问题。</p>
+
       
     </div>
 
@@ -557,7 +563,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#发现问题"><span class="nav-number">1.</span> <span class="nav-text">发现问题</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#发现问题"><span class="nav-number">1.</span> <span class="nav-text">发现问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开始排查问题"><span class="nav-number">2.</span> <span class="nav-text">开始排查问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一阶段"><span class="nav-number">2.1.</span> <span class="nav-text">第一阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二阶段"><span class="nav-number">2.2.</span> <span class="nav-text">第二阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三阶段"><span class="nav-number">2.3.</span> <span class="nav-text">第三阶段</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反思"><span class="nav-number">3.</span> <span class="nav-text">反思</span></a></li></ol></div>
             
 
           </div>
